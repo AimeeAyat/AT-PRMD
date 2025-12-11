@@ -57,7 +57,7 @@ dpo:
 
   # Pessimistic RMD settings
   pessimism:
-    method: "hard_min"  # Options: "none", "hard_min", "cvar", "hierarchical"
+    method: "cvar"  # Options: "none", "hard_min", "cvar", "hierarchical"
     cvar_alpha: 0.1  # For CVaR method (worst 10%)
 
   # Multi-objective weighting
