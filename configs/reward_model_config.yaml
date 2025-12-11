@@ -67,7 +67,7 @@ data:
     helpful:
       dataset: "Anthropic/hh-rlhf"
       subsets: ["helpful-base", "helpful-online", "helpful-rejection-sampled"]
-      max_samples: 80000
+      max_samples: 42000
     harmless:
       dataset: "Anthropic/hh-rlhf"
       subsets: ["harmless-base"]

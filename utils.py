@@ -37,12 +37,12 @@ def get_device() -> torch.device:
     """
     if torch.cuda.is_available():
         device = torch.device("cuda")
-        print(f"🚀 Using GPU: {torch.cuda.get_device_name(0)}")
+        print(f"[*] Using GPU: {torch.cuda.get_device_name(0)}")
         print(f"   Memory: {torch.cuda.get_device_properties(0).total_memory / 1e9:.2f} GB")
         print(f"   CUDA Version: {torch.version.cuda}")
     else:
         device = torch.device("cpu")
-        print("💻 Using CPU")
+        print("[*] Using CPU")
 
     return device
 
