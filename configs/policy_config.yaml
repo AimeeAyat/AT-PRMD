@@ -1,0 +1,88 @@
+# Policy Training Configuration (Pessimistic DPO)
+# Based on AT-PRMD paper specifications
+
+model:
+  name: "Qwen/Qwen2.5-3B"
+  cache_dir: "./models/cache"
+  use_flash_attention: true
+
+reward_models:
+  helpful_path: "./models/reward_models/helpful_rm"
+  harmless_path: "./models/reward_models/harmless_rm"
+  honest_path: "./models/reward_models/honest_rm"
+
+training:
+  output_dir: "./models/policy_models"
+  num_train_epochs: 1
+  per_device_train_batch_size: 2
+  per_device_eval_batch_size: 4
+  gradient_accumulation_steps: 16  # Effective batch size = 32
+  learning_rate: 5.0e-7  # Lower LR for policy training
+  lr_scheduler_type: "cosine"
+  warmup_ratio: 0.1
+  weight_decay: 0.01
+
+  # Optimization
+  optim: "adamw_torch"
+  max_grad_norm: 1.0
+
+  # Mixed Precision
+  bf16: true
+  tf32: true
+
+  # Logging
+  logging_steps: 5
+  logging_dir: "./logs/policy_models"
+  report_to: ["tensorboard", "wandb"]
+
+  # Evaluation
+  evaluation_strategy: "steps"
+  eval_steps: 50
+  save_strategy: "steps"
+  save_steps: 100
+  save_total_limit: 5
+  load_best_model_at_end: true
+
+  # Data
+  max_length: 512
+  max_prompt_length: 256
+
+  # Reproducibility
+  seed: 42
+
+dpo:
+  beta: 0.1  # KL penalty coefficient
+  label_smoothing: 0.0
+  loss_type: "sigmoid"  # Standard DPO loss
+
+  # Pessimistic RMD settings
+  pessimism:
+    method: "hard_min"  # Options: "none", "hard_min", "cvar", "hierarchical"
+    cvar_alpha: 0.1  # For CVaR method (worst 10%)
+
+  # Multi-objective weighting
+  objective_weights:
+    helpful: 0.4
+    harmless: 0.4
+    honest: 0.2
+
+  # Constitutional constraints
+  use_constraints: false
+  constraint_thresholds:
+    helpful: 0.0
+    harmless: 0.0
+    honest: 0.0
+  constraint_penalty: 1.0
+
+data:
+  dataset_name: "Anthropic/hh-rlhf"
+  cache_dir: "./data/cache"
+  train_split: "train"
+  test_split: "test"
+  max_samples: 50000  # For policy training
+
+wandb:
+  project: "AT-PRMD"
+  entity: null
+  name: null
+  tags: ["policy-training", "pessimistic-dpo", "qwen"]

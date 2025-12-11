@@ -1,0 +1,55 @@
+# Core Deep Learning Framework
+torch==2.7.0
+torchvision==0.20.0
+torchaudio==2.7.0
+
+# Transformers and Model Training
+transformers==4.46.0
+accelerate==1.1.1
+peft==0.13.2
+bitsandbytes==0.44.1
+
+# TRL for Reward Modeling and DPO
+trl==0.12.1
+
+# Dataset Management
+datasets==3.1.0
+
+# Evaluation and Metrics
+evaluate==0.4.3
+nltk==3.9.1
+rouge-score==0.1.2
+sacrebleu==2.4.3
+
+# Utilities
+numpy==1.26.4
+pandas==2.2.3
+scipy==1.14.1
+scikit-learn==1.5.2
+
+# Logging and Tracking
+wandb==0.18.7
+tensorboard==2.18.0
+
+# Configuration Management
+pyyaml==6.0.2
+omegaconf==2.3.0
+
+# Progress and Visualization
+tqdm==4.66.5
+matplotlib==3.9.2
+seaborn==0.13.2
+
+# Code Quality
+black==24.10.0
+flake8==7.1.1
+
+# Additional NLP Tools
+sentencepiece==0.2.0
+protobuf==5.28.3
+tokenizers==0.20.3
+
+# For benchmark evaluations
+lm-eval==0.4.4
+openai==1.54.5  # For GPT comparisons if needed
+anthropic==0.39.0  # For Claude comparisons if needed

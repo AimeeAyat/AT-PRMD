@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mkdir:*)",
+      "Bash(python utils.py:*)",
+      "Bash(python test_setup.py:*)"
+    ]
+  }
+}

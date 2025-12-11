@@ -1,0 +1,91 @@
+# Reward Model Training Configuration
+# Based on research best practices for preference modeling
+
+model:
+  name: "Qwen/Qwen2.5-3B"  # BASE model (NOT Instruct) - learn alignment from scratch
+  cache_dir: "./models/cache"
+  use_flash_attention: true  # RTX 5090 supports this
+
+training:
+  output_dir: "./models/reward_models"
+  num_train_epochs: 3
+  per_device_train_batch_size: 4
+  per_device_eval_batch_size: 8
+  gradient_accumulation_steps: 8  # Effective batch size = 32
+  learning_rate: 1.0e-5
+  lr_scheduler_type: "cosine"
+  warmup_ratio: 0.1
+  weight_decay: 0.01
+
+  # Optimization
+  optim: "adamw_torch"
+  adam_beta1: 0.9
+  adam_beta2: 0.999
+  adam_epsilon: 1.0e-8
+  max_grad_norm: 1.0
+
+  # Mixed Precision (for RTX 5090)
+  bf16: true  # Use bfloat16 for better stability
+  tf32: true  # Enable TF32 for faster training
+
+  # Logging
+  logging_steps: 10
+  logging_first_step: true
+  logging_dir: "./logs/reward_models"
+  report_to: ["tensorboard", "wandb"]
+
+  # Evaluation
+  evaluation_strategy: "steps"
+  eval_steps: 100
+  save_strategy: "steps"
+  save_steps: 100
+  save_total_limit: 5  # Keep 5 checkpoints (beginning, 2 middle, end, best)
+  load_best_model_at_end: true
+  metric_for_best_model: "eval_accuracy"
+  greater_is_better: true
+
+  # Checkpointing
+  # Will save at: start (step 0), 33%, 66%, end, and best
+  # Best checkpoint will be loaded at end
+
+  # Data
+  max_length: 512
+  remove_unused_columns: false
+
+  # Reproducibility
+  seed: 42
+  data_seed: 42
+
+data:
+  # Choose approach: "hh_truthfulqa" or "pku_safe"
+  approach: "hh_truthfulqa"  # Primary approach
+  cache_dir: "./data/cache"
+  validation_split_percentage: 10
+
+  # Approach A: HH-RLHF + TruthfulQA (2+1 RMs)
+  hh_truthfulqa:
+    helpful:
+      dataset: "Anthropic/hh-rlhf"
+      subsets: ["helpful-base", "helpful-online", "helpful-rejection-sampled"]
+      max_samples: 80000
+    harmless:
+      dataset: "Anthropic/hh-rlhf"
+      subsets: ["harmless-base"]
+      max_samples: 42000
+    honest:
+      dataset: "truthful_qa"
+      config: "generation"
+      max_samples: 30000  # Will convert to preference pairs
+
+  # Approach B: PKU-SafeRLHF (3 RMs with native annotations)
+  pku_safe:
+    dataset: "PKU-Alignment/PKU-SafeRLHF"
+    objectives: ["helpfulness", "harmlessness", "honesty"]
+    max_samples_per_objective: 50000
+    # PKU has native multi-dimensional annotations
+
+wandb:
+  project: "AT-PRMD"
+  entity: null  # Set your wandb entity
+  name: null  # Will be set per run
+  tags: ["reward-modeling", "qwen", "hh-rlhf"]

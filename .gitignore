@@ -1,0 +1,51 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+.venv
+
+# Data and Models (too large for GitHub)
+data/raw/
+data/processed/
+data/cache/
+models/reward_models/
+models/policy_models/
+models/cache/
+
+# Outputs (can be regenerated)
+outputs/
+logs/
+*.log
+
+# Checkpoints
+checkpoint-*/
+runs/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb
+
+# Weights & Biases
+wandb/
+
+# Keep directory structure
+!data/.gitkeep
+!models/.gitkeep
+!outputs/.gitkeep
+!logs/.gitkeep
