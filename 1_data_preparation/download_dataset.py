@@ -23,20 +23,34 @@ def load_config(config_path: str = "configs/reward_model_config.yaml") -> Dict:
 
 
 def download_hh_rlhf(cache_dir: str) -> Dict:
-    """Download Anthropic HH-RLHF dataset."""
+    """Download Anthropic HH-RLHF dataset with all subsets."""
     print("\n" + "=" * 80)
     print("Downloading Anthropic HH-RLHF Dataset")
     print("=" * 80)
 
-    dataset = load_dataset("Anthropic/hh-rlhf", cache_dir=cache_dir)
+    # HH-RLHF has separate subsets that need to be loaded individually
+    subsets_to_load = [
+        'helpful-base',
+        'helpful-online',
+        'helpful-rejection-sampled',
+        'harmless-base'
+    ]
+
+    all_subsets = {}
+
+    for subset_name in subsets_to_load:
+        print(f"\n[*] Loading {subset_name}...")
+        try:
+            subset_data = load_dataset("Anthropic/hh-rlhf", data_dir=subset_name, cache_dir=cache_dir)
+            all_subsets[subset_name] = subset_data
+            print(f"  [OK] {subset_name}: {len(subset_data['train'])} train, {len(subset_data['test'])} test")
+        except Exception as e:
+            print(f"  [ERROR] Failed to load {subset_name}: {e}")
 
     print(f"\n[OK] HH-RLHF dataset downloaded!")
-    print(f"Available splits: {list(dataset.keys())}")
+    print(f"Loaded {len(all_subsets)} subsets")
 
-    for split_name in dataset.keys():
-        print(f"  {split_name}: {len(dataset[split_name])} examples")
-
-    return dataset
+    return all_subsets
 
 
 def download_truthful_qa(cache_dir: str) -> Dict:
@@ -147,10 +161,14 @@ def save_datasets(approach: str, datasets: Dict, output_dir: str = "./data/raw")
     os.makedirs(output_dir, exist_ok=True)
 
     if approach == "hh_truthfulqa":
-        # Save HH-RLHF
-        hh_path = os.path.join(output_dir, "hh_rlhf")
-        datasets['hh_rlhf'].save_to_disk(hh_path)
-        print(f"  [OK] Saved HH-RLHF to {hh_path}")
+        # Save HH-RLHF subsets (each subset is a separate DatasetDict)
+        hh_base_path = os.path.join(output_dir, "hh_rlhf")
+        os.makedirs(hh_base_path, exist_ok=True)
+
+        for subset_name, subset_data in datasets['hh_rlhf'].items():
+            subset_path = os.path.join(hh_base_path, subset_name)
+            subset_data.save_to_disk(subset_path)
+            print(f"  [OK] Saved HH-RLHF {subset_name} to {subset_path}")
 
         # Save TruthfulQA
         tqa_path = os.path.join(output_dir, "truthful_qa")

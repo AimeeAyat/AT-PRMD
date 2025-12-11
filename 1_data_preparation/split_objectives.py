@@ -42,9 +42,12 @@ def process_hh_rlhf_helpful(hh_dataset: Dict, config: Dict) -> DatasetDict:
     all_examples = []
     for subset in subsets:
         if subset in hh_dataset:
-            examples = list(hh_dataset[subset])
-            print(f"  {subset}: {len(examples):,} examples")
-            all_examples.extend(examples)
+            # Each subset is a DatasetDict with 'train' and 'test' splits
+            train_examples = list(hh_dataset[subset]['train'])
+            test_examples = list(hh_dataset[subset]['test'])
+            subset_examples = train_examples + test_examples
+            print(f"  {subset}: {len(subset_examples):,} examples (train: {len(train_examples)}, test: {len(test_examples)})")
+            all_examples.extend(subset_examples)
 
     print(f"  Total helpful examples: {len(all_examples):,}")
 
@@ -71,9 +74,12 @@ def process_hh_rlhf_harmless(hh_dataset: Dict, config: Dict) -> DatasetDict:
     all_examples = []
     for subset in subsets:
         if subset in hh_dataset:
-            examples = list(hh_dataset[subset])
-            print(f"  {subset}: {len(examples):,} examples")
-            all_examples.extend(examples)
+            # Each subset is a DatasetDict with 'train' and 'test' splits
+            train_examples = list(hh_dataset[subset]['train'])
+            test_examples = list(hh_dataset[subset]['test'])
+            subset_examples = train_examples + test_examples
+            print(f"  {subset}: {len(subset_examples):,} examples (train: {len(train_examples)}, test: {len(test_examples)})")
+            all_examples.extend(subset_examples)
 
     print(f"  Total harmless examples: {len(all_examples):,}")
 
@@ -144,7 +150,18 @@ def process_approach_a(config: Dict) -> Dict[str, Dataset]:
 
     # Load raw datasets
     print("\n[*] Loading raw datasets...")
-    hh_dataset = load_from_disk("./data/raw/hh_rlhf")
+
+    # Load HH-RLHF subsets (each subset is saved separately)
+    hh_base_path = "./data/raw/hh_rlhf"
+    hh_dataset = {}
+
+    subset_names = ['helpful-base', 'helpful-online', 'helpful-rejection-sampled', 'harmless-base']
+    for subset_name in subset_names:
+        subset_path = os.path.join(hh_base_path, subset_name)
+        if os.path.exists(subset_path):
+            hh_dataset[subset_name] = load_from_disk(subset_path)
+            print(f"  Loaded {subset_name}")
+
     tqa_dataset = load_from_disk("./data/raw/truthful_qa")
 
     # Process each objective
