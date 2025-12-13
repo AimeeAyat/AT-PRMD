@@ -10,7 +10,7 @@ import torch
 from pathlib import Path
 from datasets import load_from_disk, concatenate_datasets
 from transformers import AutoModelForCausalLM, AutoTokenizer, TrainingArguments
-from trl import DPOTrainer, DPOConfig
+from trl import DPOTrainer
 import yaml
 
 sys.path.append(str(Path(__file__).parent.parent))
@@ -92,7 +92,7 @@ def train_standard_dpo():
     train_dataset, eval_dataset = prepare_dpo_dataset()
 
     # DPO training arguments
-    training_args = DPOConfig(
+    training_args = TrainingArguments(
         output_dir="./5_baselines/models/standard_dpo",
         num_train_epochs=1,
         per_device_train_batch_size=2,
@@ -104,7 +104,7 @@ def train_standard_dpo():
         bf16=True,
         logging_steps=10,
         logging_dir="./logs/baseline_dpo",
-        evaluation_strategy="steps",
+        eval_strategy="steps",
         eval_steps=100,
         save_strategy="steps",
         save_steps=200,
@@ -112,9 +112,6 @@ def train_standard_dpo():
         load_best_model_at_end=True,
         report_to=["tensorboard"],
         seed=42,
-        beta=0.1,  # KL penalty coefficient
-        max_length=512,
-        max_prompt_length=256,
         remove_unused_columns=False
     )
 
@@ -128,6 +125,9 @@ def train_standard_dpo():
         train_dataset=train_dataset,
         eval_dataset=eval_dataset,
         tokenizer=tokenizer,
+        beta=0.1,
+        max_length=512,
+        max_prompt_length=256,
     )
 
     # Train
