@@ -44,7 +44,7 @@ def load_base_model(model_name: str = "Qwen/Qwen2.5-3B"):
     return model, tokenizer
 
 
-def generate_response(model, tokenizer, prompt: str, max_new_tokens: int = 512) -> str:
+def generate_response(model, tokenizer, prompt: str, max_new_tokens: int = 1024) -> str:
     """Generate response from model."""
     inputs = tokenizer(prompt, return_tensors="pt").to(model.device)
 

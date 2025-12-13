@@ -49,7 +49,7 @@ training:
   # Best checkpoint will be loaded at end
 
   # Data
-  max_length: 512
+  max_length: 1024
   remove_unused_columns: false
 
   # Reproducibility

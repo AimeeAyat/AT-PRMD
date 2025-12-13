@@ -102,8 +102,8 @@ def train_standard_dpo():
         # DPO-specific parameters
         beta=0.1,  # KL penalty coefficient (lower than 0.5 for conservative optimization)
         label_smoothing=0.0,
-        max_prompt_length=256,
-        max_length=512,
+        max_prompt_length=512,
+        max_length=1024,
 
         # Optimization
         optim="adamw_torch",

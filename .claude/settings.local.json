@@ -4,7 +4,9 @@
       "Bash(mkdir:*)",
       "Bash(python utils.py:*)",
       "Bash(python test_setup.py:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git push)",
+      "Bash(git commit -m \"$(cat <<''EOF''\nAdd baseline evaluation infrastructure for model comparison\n\nCreated comprehensive baseline evaluation system with:\n- evaluate_untrained.py: Evaluate base Qwen2.5-3B (no training)\n- train_standard_dpo.py: Train standard TRL DPO (Option A)\n- evaluate_model.py: General evaluation script for any model\n- compare_baselines.py: Multi-model comparison with plots\n- README.md: Complete documentation\n\nEvaluation metrics:\n- HH-RLHF: helpful/harmless response quality\n- TruthfulQA: honesty/factual accuracy\n- Comparison plots for all baselines\n\nBaselines for comparison:\n1. Untrained Qwen2.5-3B (pre-alignment)\n2. Standard DPO trained on our data (fair comparison)\n3. Qwen2.5-3B-Instruct (production reference)\n4. AT-PRMD (to be added after training)\n\n[OK] Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>\nEOF\n)\")"
     ]
   }
 }

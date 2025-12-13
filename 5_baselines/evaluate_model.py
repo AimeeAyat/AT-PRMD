@@ -46,9 +46,9 @@ def load_model_and_tokenizer(model_path: str, use_instruct: bool = False):
     return model, tokenizer
 
 
-def generate_response(model, tokenizer, prompt: str, max_new_tokens: int = 512) -> str:
+def generate_response(model, tokenizer, prompt: str, max_new_tokens: int = 1024) -> str:
     """Generate response from model."""
-    inputs = tokenizer(prompt, return_tensors="pt", truncation=True, max_length=512).to(model.device)
+    inputs = tokenizer(prompt, return_tensors="pt", truncation=True, max_length=1024).to(model.device)
 
     with torch.no_grad():
         outputs = model.generate(
